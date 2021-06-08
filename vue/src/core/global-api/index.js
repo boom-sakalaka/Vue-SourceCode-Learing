@@ -53,6 +53,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // components with in Weex's multi-instance scenarios.
   Vue.options._base = Vue
 
+  // keep-alive 内置组件,通过extends 拓展到全局组件中
   extend(Vue.options.components, builtInComponents)
 
   initUse(Vue)

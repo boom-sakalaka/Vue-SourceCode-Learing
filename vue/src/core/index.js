@@ -3,6 +3,7 @@ import { initGlobalAPI } from './global-api/index'
 import { isServerRendering } from 'core/util/env'
 import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
 
+// 往Vue上挂载了一些全局api和静态属性 set nextTick等 全局config
 initGlobalAPI(Vue)
 
 Object.defineProperty(Vue.prototype, '$isServer', {
