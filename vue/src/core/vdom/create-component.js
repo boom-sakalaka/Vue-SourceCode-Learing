@@ -81,7 +81,7 @@ const componentVNodeHooks = {
 
 const hooksToMerge = Object.keys(componentVNodeHooks);
 
-// 组件就是Vue的一个实例，new 了一个Vue，通过嵌套，递归调用path方法，最后渲染到页面上
+// 组件就是Vue的一个实例，new 了一个Vue，通过嵌套，递归调用update-> createCompoment-> $mount -> update -> createElment -> path方法，最后渲染到页面上
 export function createComponent(
   Ctor: Class<Component> | Function | Object | void,
   data: ?VNodeData,
