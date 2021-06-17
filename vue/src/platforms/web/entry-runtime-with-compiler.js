@@ -27,7 +27,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
   }
 
   const options = this.$options;
-  // resolve template/el and convert to render function
+  // resolve template/el and convert to render function 没有render 会把templeate生成render,没有templeate,就会用el来生成template
   if (!options.render) {
     let template = options.template;
     if (template) {
@@ -56,7 +56,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
         mark('compile');
       }
 
-      // 编译template
+      //利用compileToFunctions 方法来 编译 template
       const { render, staticRenderFns } = compileToFunctions(
         template,
         {
@@ -67,7 +67,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
         },
         this
       );
-      // 带编译器的版本会 把template 编译成一个render函数，
+      // 带编译器的版本会 把template 编译成一个render函数，options就是 vm.$option
       options.render = render;
       options.staticRenderFns = staticRenderFns;
 
@@ -79,6 +79,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
     }
   }
   // 编译完成后调用 原来保存在原型上的 $mount方法
+  // el: 标识他要挂载的元素 hydrating: 服务端渲染有关,浏览器环境下不需要第二个参数
   return mount.call(this, el, hydrating);
 };
 
