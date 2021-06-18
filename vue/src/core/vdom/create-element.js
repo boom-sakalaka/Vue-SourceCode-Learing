@@ -83,7 +83,7 @@ export function _createElement(
       // platform built-in elements
       vnode = new VNode(config.parsePlatformTagName(tag), data, children, undefined, undefined, context);
     } else if (isDef((Ctor = resolveAsset(context.$options, 'components', tag)))) {
-      // component
+      // component Ctor 是 vm中注册的组件,也就是一个Vue 实例，一个(.Vue 组件导出的是一个 Vue 实例)
       vnode = createComponent(Ctor, data, context, children, tag);
     } else {
       // unknown or unlisted namespaced elements
