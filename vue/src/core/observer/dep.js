@@ -1,43 +1,42 @@
-/* @flow */
+import type Watcher from './watcher';
+import { remove } from '../util/index';
 
-import type Watcher from './watcher'
-import { remove } from '../util/index'
-
-let uid = 0
+let uid = 0;
 
 /**
  * A dep is an observable that can have multiple
  * directives subscribing to it.
  */
 export default class Dep {
-  static target: ?Watcher;
+  static target: ?Watcher; // 全局唯一Watcher，全局同一时间只有一个全局Watcher被计算
   id: number;
-  subs: Array<Watcher>;
+  subs: Array<Watcher>; // watcher 数组
 
-  constructor () {
-    this.id = uid++
-    this.subs = []
+  constructor() {
+    this.id = uid++;
+    this.subs = [];
   }
 
-  addSub (sub: Watcher) {
-    this.subs.push(sub)
+  addSub(sub: Watcher) {
+    this.subs.push(sub);
   }
 
-  removeSub (sub: Watcher) {
-    remove(this.subs, sub)
+  removeSub(sub: Watcher) {
+    remove(this.subs, sub);
   }
 
-  depend () {
+  depend() {
+    // Dep.target 就是当前的渲染watcher
     if (Dep.target) {
-      Dep.target.addDep(this)
+      Dep.target.addDep(this);
     }
   }
 
-  notify () {
+  notify() {
     // stabilize the subscriber list first
-    const subs = this.subs.slice()
+    const subs = this.subs.slice();
     for (let i = 0, l = subs.length; i < l; i++) {
-      subs[i].update()
+      subs[i].update();
     }
   }
 }
@@ -45,14 +44,15 @@ export default class Dep {
 // the current target watcher being evaluated.
 // this is globally unique because there could be only one
 // watcher being evaluated at any time.
-Dep.target = null
-const targetStack = []
+Dep.target = null;
+const targetStack = [];
 
-export function pushTarget (_target: ?Watcher) {
-  if (Dep.target) targetStack.push(Dep.target)
-  Dep.target = _target
+// this.就是当前 watcher 的实例 targetStack 是存储 watcher实例的，
+export function pushTarget(_target: ?Watcher) {
+  if (Dep.target) targetStack.push(Dep.target);
+  Dep.target = _target;
 }
 
-export function popTarget () {
-  Dep.target = targetStack.pop()
+export function popTarget() {
+  Dep.target = targetStack.pop();
 }
