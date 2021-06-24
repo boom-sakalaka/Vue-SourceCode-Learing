@@ -156,12 +156,14 @@ export function getData(data: Function, vm: Component): any {
 const computedWatcherOptions = { computed: true };
 
 function initComputed(vm: Component, computed: Object) {
-  // $flow-disable-line
+  // $flow-disable-line  创建一个空对象
   const watchers = (vm._computedWatchers = Object.create(null));
   // computed properties are just getters during SSR
   const isSSR = isServerRendering();
 
+  // 拿到computed 对象中的每一个值
   for (const key in computed) {
+    // userDef 是一个方法
     const userDef = computed[key];
     const getter = typeof userDef === 'function' ? userDef : userDef.get;
     if (process.env.NODE_ENV !== 'production' && getter == null) {
@@ -170,6 +172,7 @@ function initComputed(vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 创建一个computed watchers
       watchers[key] = new Watcher(vm, getter || noop, noop, computedWatcherOptions);
     }
 
@@ -194,6 +197,7 @@ export function defineComputed(target: any, key: string, userDef: Object | Funct
     sharedPropertyDefinition.get = shouldCache ? createComputedGetter(key) : userDef;
     sharedPropertyDefinition.set = noop;
   } else {
+    // getter 返回的就是 createComputedGetter(key) 的值
     sharedPropertyDefinition.get = userDef.get
       ? shouldCache && userDef.cache !== false
         ? createComputedGetter(key)
@@ -211,6 +215,7 @@ export function defineComputed(target: any, key: string, userDef: Object | Funct
 
 function createComputedGetter(key) {
   return function computedGetter() {
+    // vm_computedWatchers 放着 computer属性的watcher
     const watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
       watcher.depend();
