@@ -43,7 +43,7 @@ export class Observer {
     this.value = value;
     this.dep = new Dep();
     this.vmCount = 0;
-    def(value, '__ob__', this);
+    def(value, '__ob__', this); // 在 value 中添加了 __ob__ 这个属性，保存的是 Observer的实例，是为了数组响应式服务的。
     if (Array.isArray(value)) {
       const augment = hasProto ? protoAugment : copyAugment;
       augment(value, arrayMethods, arrayKeys);
@@ -130,7 +130,7 @@ export function observe(value: any, asRootData: ?boolean): Observer | void {
  * Define a reactive property on an Object.
  */
 export function defineReactive(obj: Object, key: string, val: any, customSetter?: ?Function, shallow?: boolean) {
-  const dep = new Dep(); // 初始化 Dep 对象的实例 ,依赖收集的核心
+  const dep = new Dep(); // 初始化 Dep 对象的实例 ,依赖收集的核心,利用了闭包，保存了 dep实例，dep实例去收集依赖，也就是watcher
 
   const property = Object.getOwnPropertyDescriptor(obj, key);
   if (property && property.configurable === false) {
@@ -153,7 +153,7 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
       const value = getter ? getter.call(obj) : val;
 
       // 渲染 watcher 第一个此 初始化，调用vm_update ->vm_render()生成虚拟dom 过程中 调用数据 触发数据的getter操作，
-      // 就来到了这个，然后调用dep.depend() ->之后执行 Dep.target.addDep(this)
+      // 就来到了这个，然后调用dep.depend() ->之后执行 Dep.target.addDep(this)，收集watcher
       if (Dep.target) {
         dep.depend();
         if (childOb) {
@@ -166,6 +166,7 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
       return value;
     },
     set: function reactiveSetter(newVal) {
+      // dep 收集到 watcher,然后 通过 set 改变改val 的时候，通过这个 dep 实例通知 watcher 更新
       const value = getter ? getter.call(obj) : val;
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
